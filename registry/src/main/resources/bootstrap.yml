@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: registry
+  cloud:
+    config:
+      uri: http://localhost:8888
+      fail-fast: true
+      password: ${CONFIG_SERVICE_PASSWORD}
+      username: user
+
+eureka:
+  instance: 
+    preferIpAddress: true
+    leaseExpirationDurationInSeconds: 10
+    leaseRenewalIntervalInSeconds: 10
+  server:
+    enableSelfPreservation: false
+    peerEurekaNodesUpdateIntervalMs: 30000
+  client:
+    region: default
+    registerWithEureka: true
+    fetchRegistry: true
+    eurekaServiceUrlPollIntervalSeconds: 30
+    
+    headlessService:
+      defaultZone: ${ALAUDA_EUREKA_DNS:eureka-hl-01.eureka--dev-space.svc.cluster.local}
+      
+---
+spring.profiles: docker 
+
+
+spring:
+  cloud:
+    config:
+      uri: http://config:8888

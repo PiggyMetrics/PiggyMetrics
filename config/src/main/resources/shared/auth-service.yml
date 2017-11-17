@@ -1,0 +1,30 @@
+logging:
+  level:
+    org.springframework.security: DEBUG
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      username: user
+      password: ${MONGODB_PASSWORD}
+      database: piggymetrics
+      port: 27017
+
+server:
+  context-path: /uaa
+  port: 5000
+
+# https://github.com/spring-projects/spring-security-oauth/issues/993
+security:
+  oauth2:
+    resource:
+      filter-order: 3
+
+---
+spring.profiles: docker
+
+spring:
+  data:
+    mongodb:
+      host: auth-mongodb

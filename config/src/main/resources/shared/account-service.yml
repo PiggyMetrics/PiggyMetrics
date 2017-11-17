@@ -1,0 +1,38 @@
+logging:
+  level:
+    com.piggymetrics.account.client: DEBUG
+
+security:
+  oauth2:
+    client:
+      clientId: account-service
+      clientSecret: ${ACCOUNT_SERVICE_PASSWORD}
+      accessTokenUri: http://localhost:5000/uaa/oauth/token
+      grant-type: client_credentials
+      scope: server
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      username: user
+      password: ${MONGODB_PASSWORD}
+      database: piggymetrics
+      port: 27017
+
+server:
+  context-path: /accounts
+  port: 6000
+
+---
+spring.profiles: docker
+
+security:
+  oauth2:
+    client:
+      accessTokenUri: http://auth-service:5000/uaa/oauth/token
+
+spring:
+  data:
+    mongodb:
+      host: account-mongodb

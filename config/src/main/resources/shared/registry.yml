@@ -1,0 +1,7 @@
+server:
+  port: 8761
+
+eureka:
+  client:  
+    headlessService:
+      defaultZone: ${ALAUDA_EUREKA_DNS:eureka-hl-01.eureka--dev-space.svc.cluster.local}

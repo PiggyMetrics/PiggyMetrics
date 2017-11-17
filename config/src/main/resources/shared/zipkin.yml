@@ -1,0 +1,27 @@
+
+server:
+  port: 9411
+
+logging:
+  level:
+    root: INFO
+    com.netflix.discovery: DEBUG
+
+zipkin:
+  storage:
+    type: elasticsearch
+    elasticsearch:
+      hosts: http://localhost:9200
+      username: elastic
+      password: changeme
+
+---
+spring.profiles: docker
+
+zipkin:
+  storage:
+    type: elasticsearch
+    elasticsearch:
+      hosts: http://elasticsearch:9200
+      username: elastic
+      password: changeme
