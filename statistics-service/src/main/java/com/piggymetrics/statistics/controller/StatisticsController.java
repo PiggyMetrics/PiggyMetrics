@@ -51,6 +51,9 @@ public class StatisticsController {
 			throw new RuntimeException("fake statistics exception");
 		}
 		
+		logger.debug("Calling saveAccountStatistics() for {}", accountName);
+		logger.info("Calling saveAccountStatistics() for {}", accountName);
+		
 		statisticsService.save(accountName, account);
 	}
 }
