@@ -1,4 +1,6 @@
 spring:
+  rabbitmq:
+    host: localhost
   cloud:
     config:
       server:
@@ -13,6 +15,11 @@ server:
 security:
   user:
     password: ${CONFIG_SERVICE_PASSWORD}
+
+management:
+  port: 9876
+  security:
+    enabled: false
 
 ---
 spring.profiles: docker
