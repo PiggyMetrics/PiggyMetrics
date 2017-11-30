@@ -11,6 +11,7 @@
 * YAML template for Alauda Cloud
 * Added spring profile docker for each service's spring config file.
 * Added fallback class to all FeignClients
+* Added spring-cloud-bus dependency to Config server for testing {config_server_ip}:9876/bus/refresh
 
 ## Docker Images 
 
@@ -42,10 +43,11 @@
 `docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --env ES_JAVA_OPTS='-Xms64m -Xmx64m' --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:5.6.1`
 
 
-`docker run -d -p 8888:8888 --env CONFIG_SERVICE_PASSWORD="admin" \
+`docker run --rm -p 8888:8888 --env CONFIG_SERVICE_PASSWORD="admin" \
 --env RUN_ARGS="--spring.profiles.active=docker " \
 --env ALAUDA_GIT="https://github.com/PiggyMetrics/AppConfig.git" \
 --env ALAUDA_GIT_USER="PiggyMetrics" --env ALAUDA_GIT_PASSWORD="alauda1234" \
+--link rabbitmq:rabbitmq \
 --name config   index.alauda.cn/claas/piggy-config`
 `curl http://user:admin@localhost:8888/auth_service-docker.yml`
 

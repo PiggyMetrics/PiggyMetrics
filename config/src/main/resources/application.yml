@@ -25,6 +25,8 @@ management:
 spring.profiles: docker
 
 spring:
+  rabbitmq:
+    host: rabbitmq
   cloud:
     config:
       server:
