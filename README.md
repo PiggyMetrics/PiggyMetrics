@@ -31,6 +31,9 @@
 * index.alauda.cn/claas/piggy-monitoring
 * index.alauda.cn/claas/piggy-zipkin
 
+## Sample YAML for Alauda Cloud
+[Alauda.yaml](./alauda.yml)
+
 ## CL for testing images with docker
 
 `docker run -d -p 15672:15672 -p 5672:5672  --name rabbitmq rabbitmq:3-management`
@@ -123,3 +126,5 @@
 --link rabbitmq:rabbitmq --link elasticsearch:elasticsearch \
 --name zipkin index.alauda.cn/claas/piggy-zipkin`
 `http://localhost:9411`
+
+
