@@ -17,7 +17,6 @@ security:
     password: ${CONFIG_SERVICE_PASSWORD}
 
 management:
-  port: 9876
   security:
     enabled: false
 
@@ -34,3 +33,6 @@ spring:
           uri: ${ALAUDA_GIT:https://github.com/microServiceTest/{application}}
           username: ${ALAUDA_GIT_USER}
           password: ${ALAUDA_GIT_PASSWORD}
+
+management:
+  port: 9876

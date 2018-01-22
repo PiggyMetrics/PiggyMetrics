@@ -24,6 +24,13 @@ import org.springframework.security.oauth2.provider.token.ResourceServerTokenSer
 import com.piggymetrics.account.service.security.CustomUserInfoTokenServices;
 
 import feign.RequestInterceptor;
+import springfox.documentation.builders.ApiInfoBuilder;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableResourceServer
@@ -33,6 +40,7 @@ import feign.RequestInterceptor;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableConfigurationProperties
 @Configuration
+@EnableSwagger2
 public class AccountApplication extends ResourceServerConfigurerAdapter {
 
 	@Autowired
@@ -69,4 +77,23 @@ public class AccountApplication extends ResourceServerConfigurerAdapter {
 				.antMatchers("/" , "/demo").permitAll()
 				.anyRequest().authenticated();
 	}
+
+    @Bean
+    public Docket createRestApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("PiggyMetrics")
+                .description("https://github.com/PiggyMetrics")
+                .termsOfServiceUrl("https://github.com/PiggyMetrics")
+                .version("v1")
+                .build();
+    }
+
 }

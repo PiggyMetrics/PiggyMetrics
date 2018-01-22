@@ -1,5 +1,4 @@
 management:
-  port: 9876
   security:
     enabled: false
 
@@ -59,3 +58,6 @@ spring:
     host: rabbitmq
   zipkin:
       base-url: http://zipkin:9411
+
+management:
+  port: 9876

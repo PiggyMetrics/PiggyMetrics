@@ -29,6 +29,14 @@ public class AccountController {
 		return accountService.findByName(name);
 	}
 
+	/**
+	 * Why authentication is required for this endpoint?
+     *
+	 * @link: http://www.baeldung.com/get-user-in-spring-security Retrieve User Information in Spring Security.
+	 *
+	 * @param principal
+	 * @return
+	 */
 	@RequestMapping(path = "/current", method = RequestMethod.GET)
 	public Account getCurrentAccount(Principal principal) {
 		return accountService.findByName(principal.getName());
@@ -39,6 +47,12 @@ public class AccountController {
 		accountService.saveChanges(principal.getName(), account);
 	}
 
+	/**
+	 * No authentication is required for this endpoint, why?
+	 *
+	 * @param user
+	 * @return
+	 */
 	@RequestMapping(path = "/", method = RequestMethod.POST)
 	public Account createNewAccount(@Valid @RequestBody User user) {
 		return accountService.create(user);

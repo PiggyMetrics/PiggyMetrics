@@ -1,7 +1,10 @@
 server:
   port: 8761
 
+---
+spring.profiles: docker
+
 eureka:
-  client:  
+  client:
     headlessService:
       defaultZone: ${ALAUDA_EUREKA_DNS:eureka-hl-01.eureka--dev-space.svc.cluster.local}

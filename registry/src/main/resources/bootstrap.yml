@@ -17,14 +17,10 @@ eureka:
     enableSelfPreservation: false
     peerEurekaNodesUpdateIntervalMs: 30000
   client:
-    region: default
-    registerWithEureka: true
-    fetchRegistry: true
-    eurekaServiceUrlPollIntervalSeconds: 30
-    
-    headlessService:
-      defaultZone: ${ALAUDA_EUREKA_DNS:eureka-hl-01.eureka--dev-space.svc.cluster.local}
-      
+    registerWithEureka: false
+    fetchRegistry: false
+
+
 ---
 spring.profiles: docker 
 
@@ -33,3 +29,13 @@ spring:
   cloud:
     config:
       uri: http://config:8888
+
+eureka:
+  client:
+    region: default
+    registerWithEureka: true
+    fetchRegistry: true
+    eurekaServiceUrlPollIntervalSeconds: 30
+
+    headlessService:
+      defaultZone: ${ALAUDA_EUREKA_DNS:eureka-hl-01.eureka--dev-space.svc.cluster.local}

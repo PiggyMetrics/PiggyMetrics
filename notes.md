@@ -48,7 +48,14 @@ curl http://localhost:6000/accounts/current -H "Authorization: Bearer 94bd7450-c
 curl -v http://localhost:5000/uaa/users \
 -H "Authorization: Bearer 75ed7b6a-239b-4db8-8255-a763129a4fb4" \
 -H "Content-Type: application/json" \
--d '{ "username": "a4", "password": "vbnfgh"}' 
+-d '{ "username": "a234", "password": "vbnfgh"}' 
+</pre>
+
+### Call account service to create a new user, No authentication is required, why? 
+<pre>
+curl http://192.168.0.76:6000/accounts/ -v \
+-d '{"username": "a456", "password": "vbnfgh"}' \
+-H "Content-Type: application/json"
 </pre>
 
 ### Call other services

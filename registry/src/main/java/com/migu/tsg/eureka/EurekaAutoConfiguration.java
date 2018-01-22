@@ -11,6 +11,7 @@ import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import com.netflix.discovery.EurekaClientConfig;
@@ -23,6 +24,7 @@ import com.netflix.discovery.EurekaClientConfig;
 @Configuration
 @ConditionalOnClass(EurekaClientConfig.class)
 @AutoConfigureBefore(EurekaClientAutoConfiguration.class)
+@Profile("docker")
 public class EurekaAutoConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	

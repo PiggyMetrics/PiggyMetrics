@@ -7,11 +7,12 @@
 * Upgrade Spring Cloud to [Dalston.SR4](https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-dependencies/Dalston.SR4)
 * Added Zipkin and Sleuth
 * Improvement of Dockerfile such as `RUN_ARGS` & `JAVA_OPTS` environment variable support
-* Removed unit tests temporarily 
+* Removed some unit tests 
 * YAML template for Alauda Cloud
 * Added spring profile docker for each service's spring config file.
 * Added fallback class to all FeignClients
 * Added spring-cloud-bus dependency to Config server for testing {config_server_ip}:9876/bus/refresh
+* Added swagger-ui support for gateway. But swagger-ui for accounts service does not work, why? 
 
 ## Docker Images 
 
