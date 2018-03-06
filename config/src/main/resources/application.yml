@@ -1,7 +1,18 @@
 spring:
-  rabbitmq:
-    host: localhost
   cloud:
+    bus:
+      trace:
+        enabled: true
+    stream:
+      instanceCount: 3
+      instanceIndex: 0
+      kafka:
+        binder:
+          brokers: localhost:9092
+          zk-nodes: localhost:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: true
     config:
       server:
         native:
@@ -24,9 +35,20 @@ management:
 spring.profiles: docker
 
 spring:
-  rabbitmq:
-    host: rabbitmq
   cloud:
+    bus:
+      trace:
+        enabled: true
+    stream:
+      instanceCount: 3
+      instanceIndex: 0
+      kafka:
+        binder:
+          brokers: kafka:9092
+          zk-nodes: zk:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: true
     config:
       server:
         git:

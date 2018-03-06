@@ -32,8 +32,8 @@ public class ExchangeRatesServiceImpl implements ExchangeRatesService {
     @Override
     public Map<Currency, BigDecimal> getCurrentRates() {
 
-        if (container == null || !container.getDate().equals(LocalDate.now())) {
-            container = client.getRates(Currency.getBase());
+		if (container == null || !container.getDate().equals(LocalDate.now())) {
+			container = client.getRates(Currency.getBase());
 
             if (container == null) {
                 log.info("Failed to load real rates so use default one.");

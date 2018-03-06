@@ -32,6 +32,16 @@
 * index.alauda.cn/claas/piggy-monitoring
 * index.alauda.cn/claas/piggy-zipkin
 
+
+## Docker Images working with Alauda platform
+
+* index.alauda.cn/claas/piggy-new-web
+* index.alauda.cn/claas/piggy-new-auth-service
+* index.alauda.cn/claas/piggy-new-account-service
+* index.alauda.cn/claas/piggy-new-statistics-service
+* index.alauda.cn/claas/piggy-new-notification-service
+
+
 ## Sample YAML for Alauda Cloud
 [Alauda.yaml](./alauda.yml)
 
@@ -131,3 +141,10 @@ http://localhost:4000/swagger-ui.html
 `http://localhost:9411`
 
 
+``
+
+export CONFIG_SERVICE_PASSWORD="admin"
+export NOTIFICATION_SERVICE_PASSWORD="admin"
+export STATISTICS_SERVICE_PASSWORD="admin"
+export ACCOUNT_SERVICE_PASSWORD="admin"
+export MONGODB_PASSWORD="admin"

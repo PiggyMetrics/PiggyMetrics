@@ -32,13 +32,25 @@ security:
       user-info-uri: http://localhost:5000/uaa/users/current
 
 spring:
-  rabbitmq:
-    host: localhost
   zipkin:
       base-url: http://localhost:9411
   sleuth:
     sampler:
       percentage: 1.0
+  cloud:
+    bus:
+      trace:
+        enabled: true
+    stream:
+      instanceCount: 3
+      instanceIndex: 0
+      kafka:
+        binder:
+          brokers: localhost:9092
+          zk-nodes: localhost:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: true
 
 ---
 spring.profiles: docker
@@ -54,10 +66,22 @@ security:
       user-info-uri: http://auth-service:5000/uaa/users/current
 
 spring:
-  rabbitmq:
-    host: rabbitmq
   zipkin:
       base-url: http://zipkin:9411
+  cloud:
+    bus:
+      trace:
+        enabled: true
+    stream:
+      instanceCount: 3
+      instanceIndex: 0
+      kafka:
+        binder:
+          brokers: kafka:9092
+          zk-nodes: zk:2181
+          minPartitionCount: 1
+          autoCreateTopics: true
+          autoAddPartitions: true
 
 management:
   port: 9876
