@@ -42,6 +42,9 @@ curl http://account-service:admin@localhost:5000/uaa/oauth/token \
 <pre>
 curl http://localhost:6000/accounts/current -H "Authorization: Bearer 94bd7450-c71d-4646-8fc4-cd3d1079e43b"
 </pre>
+<pre>
+curl http://localhost:6000/accounts/v2/api-docs -v -H "Authorization: Bearer 89989c76-1b94-495f-8c71-6cdf4fbd6383"
+</pre>
 
 ### Call auth service to create a new user
 <pre>

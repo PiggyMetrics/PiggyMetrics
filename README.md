@@ -67,6 +67,8 @@
 --link config:config --link registry:registry \
 --name gateway  index.alauda.cn/claas/piggy-gateway`
 
+http://localhost:4000/swagger-ui.html
+
 `docker run --rm -p 5000:5000 \
 --env CONFIG_SERVICE_PASSWORD="admin" \
 --env NOTIFICATION_SERVICE_PASSWORD="admin" \
