@@ -130,21 +130,13 @@ http://localhost:4000/swagger-ui.html
 --link config:config --link registry:registry \
 --link rabbitmq:rabbitmq \
 --name monitoring index.alauda.cn/claas/piggy-monitoring`
-`http://localhost:8080`
+`http://localhost:8080/hystrix`
 
 `docker run --rm -p 9411:9411 \
---env CONFIG_SERVICE_PASSWORD="admin" \
+--env CONFIG_SERVICE_PASSWORD="admin" \_``_````
 --env RUN_ARGS="--spring.profiles.active=docker " \
 --link config:config --link registry:registry \
 --link rabbitmq:rabbitmq --link elasticsearch:elasticsearch \
 --name zipkin index.alauda.cn/claas/piggy-zipkin`
 `http://localhost:9411`
 
-
-``
-
-export CONFIG_SERVICE_PASSWORD="admin"
-export NOTIFICATION_SERVICE_PASSWORD="admin"
-export STATISTICS_SERVICE_PASSWORD="admin"
-export ACCOUNT_SERVICE_PASSWORD="admin"
-export MONGODB_PASSWORD="admin"
