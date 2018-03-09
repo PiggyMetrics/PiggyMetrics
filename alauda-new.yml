@@ -1,0 +1,82 @@
+data-mongodb:
+  image: index.alauda.cn/claas/piggy-mongodb
+  environment:
+    INIT_DUMP: account-service-dump.js
+    MONGODB_PASSWORD: admin 
+  alauda_lb: ALB
+  ports:
+    - '27017'
+  net: flannel
+
+auth-service:
+  image: index.alauda.cn/claas/piggy-new-auth-service
+  size: L
+  environment:
+      CONFIG_SERVICE_PASSWORD: admin
+      NOTIFICATION_SERVICE_PASSWORD: admin
+      STATISTICS_SERVICE_PASSWORD: admin
+      ACCOUNT_SERVICE_PASSWORD: admin
+      MONGODB_PASSWORD: admin
+      RUN_ARGS: --spring.profiles.active=docker
+  alauda_lb: ALB
+  ports:
+    - '5000'
+  net: flannel
+ 
+account-service:
+  image: index.alauda.cn/claas/piggy-new-account-service
+  size: L
+  environment:
+    CONFIG_SERVICE_PASSWORD: admin
+    ACCOUNT_SERVICE_PASSWORD: admin
+    MONGODB_PASSWORD: admin
+    RUN_ARGS: --spring.profiles.active=docker
+  links:
+    - 'auth-service:auth-service'
+  alauda_lb: ALB
+  ports:
+    - '6000'
+  net: flannel
+ 
+statistics-service:
+  image: index.alauda.cn/claas/piggy-new-statistics-service
+  size: L
+  environment:
+    CONFIG_SERVICE_PASSWORD: admin
+    MONGODB_PASSWORD: admin
+    STATISTICS_SERVICE_PASSWORD: admin
+    RUN_ARGS: --spring.profiles.active=docker
+  links:
+    - 'auth-service:auth-service'
+  alauda_lb: ALB
+  ports:
+    - '7000'
+  net: flannel
+ 
+notification-service:
+  image: index.alauda.cn/claas/piggy-new-notification-service
+  size: L
+  environment:
+    CONFIG_SERVICE_PASSWORD: admin
+    MONGODB_PASSWORD: admin
+    NOTIFICATION_SERVICE_PASSWORD: admin
+    RUN_ARGS: --spring.profiles.active=docker
+  links:
+    - 'auth-service:auth-service'
+  alauda_lb: ALB
+  ports:
+    - '8000'
+  net: flannel
+
+webui:
+  image: index.alauda.cn/claas/piggy-new-web
+  size: S
+  environment:
+    CONFIG_SERVICE_PASSWORD: admin
+    RUN_ARGS: --spring.profiles.active=docker
+  links:
+    - 'notification-service:notification-service'
+  alauda_lb: ALB
+  ports:
+    - 'haproxy-172-20-3-5:19411:9411/http'
+  net: flannel
