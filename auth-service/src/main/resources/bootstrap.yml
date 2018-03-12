@@ -3,7 +3,7 @@ spring:
     name: auth-service
   cloud:
     config:
-      uri: http://localhost:8888
+      uri: http://10.109.120.155:8888
 #      fail-fast: true
       password: ${CONFIG_SERVICE_PASSWORD}
       username: user
@@ -14,4 +14,4 @@ spring.profiles: docker
 spring:
   cloud:
     config:
-      uri: http://config:8888
+      uri: http://pubconfig.pubconfig--dev-space:80

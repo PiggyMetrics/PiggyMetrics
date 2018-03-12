@@ -14,5 +14,5 @@ spring.profiles: docker
 spring:
   cloud:
     config:
-      uri: http://config:8888
+      uri: http://pubconfig.pubconfig--dev-space:80
       
