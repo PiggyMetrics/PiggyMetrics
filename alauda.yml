@@ -149,6 +149,16 @@ monitoring:
     - '8989'
   net: flannel
 
+web:
+  image: index.alauda.cn/claas/piggy-web
+  size: S
+  links:
+    - 'gateway:gateway'
+  alauda_lb: ALB
+  ports:
+    - '8080:8080'
+  net: flannel
+
 zipkin:
   image: index.alauda.cn/claas/piggy-zipkin
   size: L
