@@ -89,6 +89,8 @@ docker build -t index.alauda.cn/claas/piggy-statistics-service .
 docker build -t index.alauda.cn/claas/piggy-notification-service .
 docker build -t index.alauda.cn/claas/piggy-monitoring .
 docker build -t index.alauda.cn/claas/piggy-zipkin .
+
+docker build -t index.alauda.cn/claas/piggy-web .
 </pre>
 
 And dependency images
