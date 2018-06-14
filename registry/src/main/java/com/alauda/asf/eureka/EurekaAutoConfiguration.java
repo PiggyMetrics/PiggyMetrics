@@ -1,4 +1,4 @@
-package com.migu.tsg.eureka;
+package com.alauda.asf.eureka;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ import com.netflix.discovery.EurekaClientConfig;
 @Configuration
 @ConditionalOnClass(EurekaClientConfig.class)
 @AutoConfigureBefore(EurekaClientAutoConfiguration.class)
-@Profile("docker")
+@Profile("!defaullt")
 public class EurekaAutoConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	

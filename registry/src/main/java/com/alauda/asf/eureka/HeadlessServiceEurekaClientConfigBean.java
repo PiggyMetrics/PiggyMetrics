@@ -1,4 +1,4 @@
-package com.migu.tsg.eureka;
+package com.alauda.asf.eureka;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,14 +10,11 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.netflix.eureka.EurekaClientConfigBean;
-import org.springframework.context.annotation.Profile;
 
 /**
  * 
- * @author zhangq
  *
  */
-@Profile("docker")
 public class HeadlessServiceEurekaClientConfigBean extends EurekaClientConfigBean {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	

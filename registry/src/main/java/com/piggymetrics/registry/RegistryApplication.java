@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
-@SpringBootApplication(scanBasePackages= {"com.piggymetrics.registry", "com.migu.tsg.eureka"} )
+@SpringBootApplication(scanBasePackages= {"com.piggymetrics.registry", "com.alauda.asf.eureka"})
 @EnableEurekaServer
 public class RegistryApplication {
 
