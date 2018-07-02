@@ -24,7 +24,7 @@ import com.netflix.discovery.EurekaClientConfig;
 @Configuration
 @ConditionalOnClass(EurekaClientConfig.class)
 @AutoConfigureBefore(EurekaClientAutoConfiguration.class)
-@Profile("!defaullt")
+@Profile("!default")
 public class EurekaAutoConfiguration {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	

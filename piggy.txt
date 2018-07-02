@@ -1,0 +1,36 @@
+#Get the authorization token for account service
+curl http://account-service:admin@auth-service:5000/uaa/oauth/token \
+ -d 'scope=server&username=account-service&password=admin&grant_type=client_credentials'
+
+#output: {"access_token":"430097d5-6ebe-4c77-88f3-3a2ea7b06bac","token_type":"bearer","expires_in":43199,"scope":"server"}%
+
+
+#Call auth service to create a new user 
+curl -v http://auth-service:5000/uaa/users \
+-H "Authorization: Bearer 75ed7b6a-239b-4db8-8255-a763129a4fb4" \
+-H "Content-Type: application/json" \
+-d '{ "username": "exception", "password": "111111"}'  
+
+
+#Get the authorization token for account service
+curl -d 'scope=ui&username=exception&password=111111&grant_type=password' \
+ http://browser@auth-service:5000/uaa/oauth/token 
+
+
+# Call statistics-service for exception user 
+curl -v http://statistics-service:7000/statistics \
+-H "Authorization: Bearer 75ed7b6a-239b-4db8-8255-a763129a4fb4" \
+-H "Content-Type: application/json" \
+-d '{"incomes": [], "expenses": [], "saving": {"amount": 100, "Currency": "USD", "interest": 1, "deposit": true, "capitalization": true}}'
+
+
+#!/bin/bash
+while true; do    
+	curl -v http://statistics-service:7000/statistics \
+	-H "Authorization: Bearer 75ed7b6a-239b-4db8-8255-a763129a4fb4" \
+	-H "Content-Type: application/json" \
+	-d '{"incomes": [], "expenses": [], "saving": {"amount": 100, "Currency": "USD", "interest": 1, "deposit": true, "capitalization": true}}'
+
+    sleep 5
+done
+
