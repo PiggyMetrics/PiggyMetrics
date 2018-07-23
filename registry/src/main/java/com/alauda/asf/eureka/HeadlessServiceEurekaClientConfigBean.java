@@ -45,7 +45,6 @@ public class HeadlessServiceEurekaClientConfigBean extends EurekaClientConfigBea
         
         List<String> ips;
         List<String> urls = new ArrayList<>();
-        String p = this.getEurekaServerPort();
 
         // Fall back to default value if EurekaServerURLContext is blank. 
         final String ctx = StringUtils.isBlank(getEurekaServerURLContext()) ? DEFAULT_SERVER_URL_CONTEXT : getEurekaServerURLContext();
@@ -61,12 +60,14 @@ public class HeadlessServiceEurekaClientConfigBean extends EurekaClientConfigBea
                 if (pos > 0) {
                     ips = dr.resolveARecord(s.substring(0, pos));
                     if (ips != null) {
-                        String port = s.substring(pos + 1);
+                        String tmp = s.substring(pos + 1);
+                        String port = StringUtils.isEmpty(tmp) ? "8761" : tmp;
                         urls.addAll(ips.stream().map((e) -> "http://" + e + ":" + port + "/" + ctx + "/")
                                 .collect(Collectors.toList()));
                     }
                 }
                 else {
+                    String p = this.getEurekaServerPort();
                     ips = dr.resolveARecord(s);
                     if (ips != null) {
                         urls.addAll(ips.stream().map((e) -> "http://" + e + ":" + p + "/" + ctx + "/")
