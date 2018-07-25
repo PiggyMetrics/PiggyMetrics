@@ -108,6 +108,9 @@ index.alauda.cn/claas/piggy-mongodb
 index.alauda.cn/claas/piggy-elasticsearch:update
 </pre>
 
+<pre>
+docker run -d -p 15672:15672 -p 5672:5672  --name rabbitmq index.alauda.cn/claas/piggy-rabbitmq:3-management
+</pre>
 
 ## Docker run statements for testing 
 ### Config server
@@ -143,3 +146,6 @@ docker run --rm -p 9411:9411 --env CONFIG_SERVICE_PASSWORD=admin \
 --link config:config \
 --name zipkin index.alauda.cn/piggy-metrics/zipkin
 </pre>
+
+
+

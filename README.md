@@ -37,12 +37,12 @@
 
 ## CL for testing images with docker
 
-`docker run -d -p 15672:15672 -p 5672:5672  --name rabbitmq rabbitmq:3-management`
+`docker run -d -p 15672:15672 -p 5672:5672  --name rabbitmq index.alauda.cn/claas/piggy-rabbitmq:3-management`
 
 `docker run -d -p 27017:27017 \
 --env INIT_DUMP="account-service-dump.js" \
 --env MONGODB_PASSWORD="admin" \
---name data-mongodb index.alauda.cn/demo100/piggymetrics-mongodb`
+--name data-mongodb index.alauda.cn/claas/piggy-mongodb`
 
 `docker run -d -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" --env ES_JAVA_OPTS='-Xms64m -Xmx64m' --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:5.6.1`
 
@@ -56,7 +56,7 @@
 `curl http://user:admin@localhost:8888/auth_service-docker.yml`
 
 
-`docker run -d -p 8761:8761  --env CONFIG_SERVICE_PASSWORD="admin" \
+`docker run --rm -p 8761:8761  --env CONFIG_SERVICE_PASSWORD="admin" \
 --env RUN_ARGS="--spring.profiles.active=docker " \
 --link config:config --name registry  index.alauda.cn/claas/piggy-registry`
 `http://localhost:8761`
@@ -126,8 +126,7 @@ http://localhost:4000/swagger-ui.html
 --env CONFIG_SERVICE_PASSWORD="admin" \
 --env RUN_ARGS="--spring.profiles.active=docker " \
 --link config:config --link registry:registry \
---link rabbitmq:rabbitmq --link elasticsearch:elasticsearch \
---name zipkin index.alauda.cn/claas/piggy-zipkin`
+--link rabbitmq:rabbitmq --name zipkin index.alauda.cn/claas/piggy-zipkin`
 `http://localhost:9411`
 
 

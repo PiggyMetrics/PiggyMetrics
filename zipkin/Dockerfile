@@ -3,7 +3,23 @@ FROM openjdk:alpine
 ENV ES_USERNAME elastic
 ENV ES_PASSWORD changeme
 
-ADD ./target/zipkin-server-0.1.0.jar /app/
-CMD ["sh", "-c", "java ${JAVA_OPTS} -Djava.security.egd=file:/dev/./urandom -jar /app/zipkin-server-0.1.0.jar ${RUN_ARGS}"]
+ENV SPRING_OUTPUT_ANSI_ENABLED=ALWAYS \
+    APP_SLEEP=0 \
+    JAVA_OPTS="" \
+    RUN_ARGS=""
+
+VOLUME /tmp
+
+# Add a user admin to run our application so that it doesn't need to run as root
+RUN adduser -D -s /bin/sh admin
+WORKDIR /home/admin
+
+ADD entrypoint.sh entrypoint.sh
+RUN chmod 755 entrypoint.sh && chown admin:admin entrypoint.sh
+USER admin
+
+ADD target/app.jar app.jar
+
+ENTRYPOINT ["./entrypoint.sh"]
 
 EXPOSE 9411

@@ -1,0 +1,981 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: data-mongodb
+  name: deployment-data-mongodb
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: data-mongodb
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: data-mongodb
+    namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: INIT_DUMP
+          value: account-service-dump.js
+        - name: MONGODB_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/common/mongodb:latest
+        imagePullPolicy: Always
+        name: data-mongodb
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2048Mi
+          requests:
+            cpu: 100m
+            memory: 204Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: data-mongodb
+  name: data-mongodb
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-27017
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    service_name: data-mongodb
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: rabbitmq
+  name: deployment-rabbitmq
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      service_name: rabbitmq
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: rabbitmq
+    namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - image: 10.0.2.9:5000/common/rabbitmq:3-management
+        imagePullPolicy: Always
+        name: rabbitmq
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2048Mi
+          requests:
+            cpu: 100m
+            memory: 204Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: rabbitmq
+  name: rabbitmq
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-5672
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: port-15672
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  selector:
+    service_name: rabbitmq
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: elasticsearch
+  name: deployment-elasticsearch
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: elasticsearch
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: elasticsearch
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: ES_JAVA_OPTS
+          value: -Xms384m -Xmx384m
+        image: 10.0.2.9:5000/common/elasticsearch:update
+        imagePullPolicy: Always
+        name: elasticsearch
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1Gi
+          requests:
+            cpu: 200m
+            memory: 409Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: elasticsearch
+  name: elasticsearch
+  namespace: cebdemo
+  annotations:
+    loadbalancer.alauda.io/bind: >-
+      [{"container_port":9200,"protocol":"http","name":"nginx-10-0-2-9","port":80},{"container_port":9300,"protocol":"http","name":"nginx-10-0-2-9","port":9300}]
+spec:
+  ports:
+  - name: port-9300
+    port: 9300
+    protocol: TCP
+    targetPort: 9300
+  - name: port-9200
+    port: 9200
+    protocol: TCP
+    targetPort: 9200
+  selector:
+    service_name: elasticsearch
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: config
+  name: deployment-config
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: config
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: config
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker --ALAUDA_GIT=http://10.0.2.6:9988/root/piggymetrics-config.git --ALAUDA_GIT_USER=root --ALAUDA_GIT_PASSWORD=alauda1234
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/piggymetrics/config:latest
+        imagePullPolicy: Always
+        name: config
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-sleep1
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://rabbitmq:15672; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: config
+  name: config
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-8888
+    port: 8888
+    protocol: TCP
+    targetPort: 8888
+  selector:
+    service_name: config
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: registry
+  name: deployment-registry
+  namespace: cebdemo
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: registry
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: registry
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker --ALAUDA_EUREKA_DNS=eureka-hl-01.cebdemo.svc.cluster.local
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/piggymetrics/registry:latest
+        imagePullPolicy: Always
+        name: registry
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-sleep1
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://config:8888; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: registry
+  name: registry
+  namespace: cebdemo
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port": 8761, "protocol": "http", "name": "nginx-10-0-2-9", "port": 8761}]'
+spec:
+  ports:
+  - name: port-8761
+    port: 8761
+    protocol: TCP
+    targetPort: 8761
+  selector:
+    service_name: registry
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: registry
+  name: eureka-hl-01
+  namespace: cebdemo
+spec:
+  clusterIP: None
+  ports:
+  - name: port-8761
+    port: 8761
+    protocol: TCP
+    targetPort: 8761
+  selector:
+    service_name: registry
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: zipkin
+  name: deployment-zipkin
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: zipkin
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: zipkin
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/piggymetrics/zipkin:latest
+        imagePullPolicy: Always
+        name: zipkin
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 4Gi
+          requests:
+            cpu: 500m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-check-es
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://elasticsearch:9200; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: zipkin
+  name: zipkin
+  namespace: cebdemo
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port": 9411, "protocol": "http", "name": "nginx-10-0-2-9", "port": 8989}]'
+spec:
+  ports:
+  - name: port-9411
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  selector:
+    service_name: zipkin
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: monitoring
+  name: deployment-monitoring
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: monitoring
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: monitoring
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/piggymetrics/monitoring:latest
+        imagePullPolicy: Always
+        name: monitoring
+        resources:
+          limits:
+            cpu: 500m
+            memory: 4Gi
+          requests:
+            cpu: 200m
+            memory: 4Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-check-rabbitmq
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://rabbitmq:15672; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: monitoring
+  name: monitoring
+  namespace: cebdemo
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port": 8080, "protocol": "http", "name": "nginx-10-0-2-9", "port": 8970}]'
+spec:
+  ports:
+  - name: port-8989
+    port: 8989
+    protocol: TCP
+    targetPort: 8989
+  - name: port-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    service_name: monitoring
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: gateway
+  name: deployment-gateway
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: gateway
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: gateway
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        image: 10.0.2.9:5000/piggymetrics/gateway:latest
+        imagePullPolicy: Always
+        name: gateway
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        livenessProbe:
+          initialDelaySeconds: 100
+          periodSeconds: 20
+          timeoutSeconds: 10
+          successThreshold: 0
+          failureThreshold: 3
+          exec:
+            command:
+              - pwd
+        readinessProbe:
+          initialDelaySeconds: 70
+          periodSeconds: 20
+          timeoutSeconds: 10
+          successThreshold: 0
+          failureThreshold: 3
+          httpGet:
+            path: /
+            scheme: HTTP
+            port: 4000
+      initContainers:
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: gateway
+  name: gateway
+  namespace: cebdemo
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port": 4000, "protocol": "http", "name": "nginx-10-0-2-9", "port": 80}]'
+spec:
+  ports:
+  - name: port-4000
+    port: 4000
+    protocol: TCP
+    targetPort: 4000
+  selector:
+    service_name: gateway
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: auth-service
+  name: deployment-auth-service
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: auth-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: auth-service
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: STATISTICS_SERVICE_PASSWORD
+          value: admin
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: ACCOUNT_SERVICE_PASSWORD
+          value: admin
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: NOTIFICATION_SERVICE_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/piggymetrics/auth-service:latest
+        imagePullPolicy: Always
+        name: auth-service
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: auth-service
+  name: auth-service
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-5000
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    service_name: auth-service
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: notification-service
+  name: deployment-notification-service
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: notification-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: notification-service
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: NOTIFICATION_SERVICE_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        image: 10.0.2.9:5000/piggymetrics/notification-service:latest
+        imagePullPolicy: Always
+        name: notification-service
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: notification-service
+  name: notification-service
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-8000
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    service_name: notification-service
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: account-service
+  name: deployment-account-service
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: account-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: account-service
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: ACCOUNT_SERVICE_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        image: 10.0.2.9:5000/piggymetrics/account-service:latest
+        imagePullPolicy: Always
+        name: account-service
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: account-service
+  name: account-service
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-6000
+    port: 6000
+    protocol: TCP
+    targetPort: 6000
+  selector:
+    service_name: account-service
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  generation: 1
+  labels:
+    service_name: statistics-service
+  name: deployment-statistics-service
+  namespace: cebdemo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+        service_name: statistics-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        service_name: statistics-service
+      namespace: cebdemo
+    spec:
+      affinity:
+        podAffinity: {}
+        podAntiAffinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: STATISTICS_SERVICE_PASSWORD
+          value: admin
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        image: 10.0.2.9:5000/piggymetrics/statistics-service:latest
+        imagePullPolicy: Always
+        name: statistics-service
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      initContainers:
+        - name: init-check-eureka
+          image: 10.0.2.9:5000/centos
+          command: ['sh', '-c', 'while true; do curl --connect-timeout 5 http://registry:8761; if [ $? -eq 0 ]; then echo "Check Successfully: [Response Code] $?"; exit; else sleep 5; echo "Check Failed: wait 5 seconds ....."; fi; done']
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service_name: statistics-service
+  name: statistics-service
+  namespace: cebdemo
+spec:
+  ports:
+  - name: port-7000
+    port: 7000
+    protocol: TCP
+    targetPort: 7000
+  selector:
+    service_name: statistics-service
+  sessionAffinity: None
+  type: ClusterIP

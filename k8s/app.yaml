@@ -1,0 +1,1037 @@
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: a86dc043-fbaf-4337-ab28-cce4f59ea837
+  name: account-service
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: a86dc043-fbaf-4337-ab28-cce4f59ea837
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: account-service
+        service.alauda.io/uuid: a86dc043-fbaf-4337-ab28-cce4f59ea837
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: ACCOUNT_SERVICE_PASSWORD
+          value: admin
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: a86dc043-fbaf-4337-ab28-cce4f59ea837
+        - name: __ALAUDA_SERVICE_NAME__
+          value: account-service
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-account-service:latest
+        imagePullPolicy: Always
+        name: account-service
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: 500m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: a86dc043-fbaf-4337-ab28-cce4f59ea837
+  name: account-service
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: account-service
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: account-service
+    service.alauda.io/uuid: a86dc043-fbaf-4337-ab28-cce4f59ea837
+  name: account-service
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-6000
+    port: 6000
+    protocol: TCP
+    targetPort: 6000
+  selector:
+    service.alauda.io/name: account-service
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 1b465a88-8f8d-4ade-9c13-fa8edec4a643
+  name: auth-service
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: 1b465a88-8f8d-4ade-9c13-fa8edec4a643
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: auth-service
+        service.alauda.io/uuid: 1b465a88-8f8d-4ade-9c13-fa8edec4a643
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: NOTIFICATION_SERVICE_PASSWORD
+          value: admin
+        - name: STATISTICS_SERVICE_PASSWORD
+          value: admin
+        - name: ACCOUNT_SERVICE_PASSWORD
+          value: admin
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: 1b465a88-8f8d-4ade-9c13-fa8edec4a643
+        - name: __ALAUDA_SERVICE_NAME__
+          value: auth-service
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-auth-service:latest
+        imagePullPolicy: Always
+        name: auth-service
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: 500m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 1b465a88-8f8d-4ade-9c13-fa8edec4a643
+  name: auth-service
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: auth-service
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: auth-service
+    service.alauda.io/uuid: 1b465a88-8f8d-4ade-9c13-fa8edec4a643
+  name: auth-service
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-5000
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    service.alauda.io/name: auth-service
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 2ebb3bfa-b880-4dc6-bbf4-958a4cf2dcd7
+  name: config
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: 2ebb3bfa-b880-4dc6-bbf4-958a4cf2dcd7
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        service.alauda.io/version: "4"
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: config
+        service.alauda.io/uuid: 2ebb3bfa-b880-4dc6-bbf4-958a4cf2dcd7
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: ALAUDA_GIT
+          value: https://github.com/PiggyMetrics/AppConfig.git
+        - name: ALAUDA_GIT_USER
+          value: PiggyMetrics
+        - name: ALAUDA_GIT_PASSWORD
+          value: alauda1234
+        - name: __ALAUDA_SERVICE_ID__
+          value: 2ebb3bfa-b880-4dc6-bbf4-958a4cf2dcd7
+        - name: __ALAUDA_SERVICE_NAME__
+          value: config
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-config:latest
+        imagePullPolicy: Always
+        name: config
+        resources:
+          limits:
+            cpu: 500m
+            memory: 768G
+          requests:
+            cpu: 200m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 2ebb3bfa-b880-4dc6-bbf4-958a4cf2dcd7
+  name: config
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: config
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: config
+    service.alauda.io/uuid: 2ebb3bfa-b880-4dc6-bbf4-958a4cf2dcd7
+  name: config
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-8888
+    port: 8888
+    protocol: TCP
+    targetPort: 8888
+  selector:
+    service.alauda.io/name: config
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: mongodb
+    service.alauda.io/uuid: 8318f643-0cdc-49cd-99bf-6d9aeb89813d
+  name: data-mongodb
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-27017
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    service.alauda.io/name: mongodb
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: registry
+    service.alauda.io/uuid: ea9f7493-02c5-4164-9a9a-bc95e930a147
+  name: eureka-hl
+  namespace: piggy
+spec:
+  clusterIP: None
+  ports:
+  - name: tcp-8761
+    port: 8761
+    protocol: TCP
+    targetPort: 8761
+  selector:
+    service.alauda.io/name: registry
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 4ad54e60-b057-447c-9dc8-80a80fa6e400
+  name: gateway
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: 4ad54e60-b057-447c-9dc8-80a80fa6e400
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: gateway
+        service.alauda.io/uuid: 4ad54e60-b057-447c-9dc8-80a80fa6e400
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: 4ad54e60-b057-447c-9dc8-80a80fa6e400
+        - name: __ALAUDA_SERVICE_NAME__
+          value: gateway
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-gateway:latest
+        imagePullPolicy: Always
+        name: gateway
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: 500m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 4ad54e60-b057-447c-9dc8-80a80fa6e400
+  name: gateway
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: gateway
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port":4000,"protocol":"http","name":"haproxy-52-80-87-235","port":4000}]'
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: gateway
+    service.alauda.io/uuid: 4ad54e60-b057-447c-9dc8-80a80fa6e400
+  name: gateway
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-4000
+    port: 4000
+    protocol: TCP
+    targetPort: 4000
+  selector:
+    service.alauda.io/name: gateway
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 8318f643-0cdc-49cd-99bf-6d9aeb89813d
+  name: mongodb
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: 8318f643-0cdc-49cd-99bf-6d9aeb89813d
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: mongodb
+        service.alauda.io/uuid: 8318f643-0cdc-49cd-99bf-6d9aeb89813d
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: INIT_DUMP
+          value: account-service-dump.js
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: __ALAUDA_SERVICE_ID__
+          value: 8318f643-0cdc-49cd-99bf-6d9aeb89813d
+        - name: __ALAUDA_SERVICE_NAME__
+          value: mongodb
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-mongodb:latest
+        imagePullPolicy: Always
+        name: mongodb
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1G
+          requests:
+            cpu: 100m
+            memory: 256M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 8318f643-0cdc-49cd-99bf-6d9aeb89813d
+  name: mongodb
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: mongodb
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: c57dcb38-f9a4-46c4-9ae3-494fa1593ba5
+  name: monitoring
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: c57dcb38-f9a4-46c4-9ae3-494fa1593ba5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        service.alauda.io/version: "2"
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: monitoring
+        service.alauda.io/uuid: c57dcb38-f9a4-46c4-9ae3-494fa1593ba5
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: c57dcb38-f9a4-46c4-9ae3-494fa1593ba5
+        - name: __ALAUDA_SERVICE_NAME__
+          value: monitoring
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-monitoring:latest
+        imagePullPolicy: Always
+        name: monitoring
+        resources:
+          limits:
+            cpu: "500"
+            memory: 1G
+          requests:
+            cpu: 100m
+            memory: 256M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: c57dcb38-f9a4-46c4-9ae3-494fa1593ba5
+  name: monitoring
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: monitoring
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port":8080,"protocol":"http","name":"haproxy-52-80-87-235","port":9080}]'
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: monitoring
+    service.alauda.io/uuid: c57dcb38-f9a4-46c4-9ae3-494fa1593ba5
+  name: monitoring
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-8080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    service.alauda.io/name: monitoring
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 63ba502c-c2e8-4810-b72c-0107616e22f8
+  name: notification-service
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: 63ba502c-c2e8-4810-b72c-0107616e22f8
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: notification-service
+        service.alauda.io/uuid: 63ba502c-c2e8-4810-b72c-0107616e22f8
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: NOTIFICATION_SERVICE_PASSWORD
+          value: admin
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: 63ba502c-c2e8-4810-b72c-0107616e22f8
+        - name: __ALAUDA_SERVICE_NAME__
+          value: notification-service
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-notification-service:latest
+        imagePullPolicy: Always
+        name: notification-service
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: 500m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 63ba502c-c2e8-4810-b72c-0107616e22f8
+  name: notification-service
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: notification-service
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: notification-service
+    service.alauda.io/uuid: 63ba502c-c2e8-4810-b72c-0107616e22f8
+  name: notification-service
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-8000
+    port: 8000
+    protocol: TCP
+    targetPort: 8000
+  selector:
+    service.alauda.io/name: notification-service
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 25fcb23c-0c6c-4075-a100-c67d0c6ea055
+  name: rabbitmq
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: 25fcb23c-0c6c-4075-a100-c67d0c6ea055
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        service.alauda.io/version: "1"
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: rabbitmq
+        service.alauda.io/uuid: 25fcb23c-0c6c-4075-a100-c67d0c6ea055
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: __ALAUDA_SERVICE_ID__
+          value: 25fcb23c-0c6c-4075-a100-c67d0c6ea055
+        - name: __ALAUDA_SERVICE_NAME__
+          value: rabbitmq
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-rabbitmq:3-management
+        imagePullPolicy: Always
+        name: rabbitmq
+        resources:
+          limits:
+            cpu: 500m
+            memory: 1G
+          requests:
+            cpu: 100m
+            memory: 256M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: 25fcb23c-0c6c-4075-a100-c67d0c6ea055
+  name: rabbitmq
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: rabbitmq
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: rabbitmq
+    service.alauda.io/uuid: 25fcb23c-0c6c-4075-a100-c67d0c6ea055
+  name: rabbitmq
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-5672
+    port: 5672
+    protocol: TCP
+    targetPort: 5672
+  - name: tcp-15672
+    port: 15672
+    protocol: TCP
+    targetPort: 15672
+  selector:
+    service.alauda.io/name: rabbitmq
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: ea9f7493-02c5-4164-9a9a-bc95e930a147
+  name: registry
+  namespace: piggy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: ea9f7493-02c5-4164-9a9a-bc95e930a147
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        service.alauda.io/version: "3"
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: registry
+        service.alauda.io/uuid: ea9f7493-02c5-4164-9a9a-bc95e930a147
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: ALAUDA_EUREKA_DNS
+          value: eureka-hl
+        - name: __ALAUDA_SERVICE_ID__
+          value: ea9f7493-02c5-4164-9a9a-bc95e930a147
+        - name: __ALAUDA_SERVICE_NAME__
+          value: registry
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-registry:latest
+        imagePullPolicy: Always
+        name: registry
+        resources:
+          limits:
+            cpu: 800m
+            memory: 1G
+          requests:
+            cpu: 400m
+            memory: 768M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: ea9f7493-02c5-4164-9a9a-bc95e930a147
+  name: registry
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: registry
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port":8761,"protocol":"http","name":"haproxy-52-80-87-235","port":8761}]'
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: registry
+    service.alauda.io/uuid: ea9f7493-02c5-4164-9a9a-bc95e930a147
+  name: registry
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-8761
+    port: 8761
+    protocol: TCP
+    targetPort: 8761
+  selector:
+    service.alauda.io/name: registry
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: a26bf87e-3065-4a32-bb57-209645f714a5
+  name: statistics-service
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: a26bf87e-3065-4a32-bb57-209645f714a5
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: statistics-service
+        service.alauda.io/uuid: a26bf87e-3065-4a32-bb57-209645f714a5
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: STATISTICS_SERVICE_PASSWORD
+          value: admin
+        - name: MONGODB_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: a26bf87e-3065-4a32-bb57-209645f714a5
+        - name: __ALAUDA_SERVICE_NAME__
+          value: statistics-service
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-statistics-service:latest
+        imagePullPolicy: Always
+        name: statistics-service
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: 500m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: a26bf87e-3065-4a32-bb57-209645f714a5
+  name: statistics-service
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: statistics-service
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: statistics-service
+    service.alauda.io/uuid: a26bf87e-3065-4a32-bb57-209645f714a5
+  name: statistics-service
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-7000
+    port: 7000
+    protocol: TCP
+    targetPort: 7000
+  selector:
+    service.alauda.io/name: statistics-service
+---
+apiVersion: extensions/v1beta1
+firstTimestamp: null
+kind: Deployment
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: ac6298f0-458c-45ac-82dd-efdb3c93e0bd
+  name: zipkin
+  namespace: piggy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service.alauda.io/uuid: ac6298f0-458c-45ac-82dd-efdb3c93e0bd
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app.alauda.io/name: rabbitmq
+        app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+        service.alauda.io/name: zipkin
+        service.alauda.io/uuid: ac6298f0-458c-45ac-82dd-efdb3c93e0bd
+    spec:
+      affinity: {}
+      containers:
+      - env:
+        - name: CONFIG_SERVICE_PASSWORD
+          value: admin
+        - name: RUN_ARGS
+          value: --spring.profiles.active=docker
+        - name: __ALAUDA_SERVICE_ID__
+          value: ac6298f0-458c-45ac-82dd-efdb3c93e0bd
+        - name: __ALAUDA_SERVICE_NAME__
+          value: zipkin
+        - name: __ALAUDA_APP_NAME__
+          value: rabbitmq
+        image: index.alauda.cn/claas/piggy-zipkin:latest
+        imagePullPolicy: Always
+        name: zipkin
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1G
+          requests:
+            cpu: 500m
+            memory: 512M
+---
+apiVersion: autoscaling/v1
+firstTimestamp: null
+kind: HorizontalPodAutoscaler
+lastTimestamp: null
+metadata:
+  labels:
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/uuid: ac6298f0-458c-45ac-82dd-efdb3c93e0bd
+  name: zipkin
+  namespace: piggy
+spec:
+  maxReplicas: 20
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: zipkin
+---
+apiVersion: v1
+firstTimestamp: null
+kind: Service
+lastTimestamp: null
+metadata:
+  annotations:
+    loadbalancer.alauda.io/bind: '[{"container_port":9411,"protocol":"http","name":"haproxy-52-80-87-235","port":9411}]'
+  labels:
+    app.alauda.io/name: rabbitmq
+    app.alauda.io/uuid: 5ff60702-e42a-44f0-8dce-01ff2299a7f8
+    service.alauda.io/name: zipkin
+    service.alauda.io/uuid: ac6298f0-458c-45ac-82dd-efdb3c93e0bd
+  name: zipkin
+  namespace: piggy
+spec:
+  ports:
+  - name: tcp-9411
+    port: 9411
+    protocol: TCP
+    targetPort: 9411
+  selector:
+    service.alauda.io/name: zipkin
